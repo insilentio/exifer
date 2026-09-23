@@ -8,17 +8,20 @@ flatten_subject(
   paths,
   csv_execute = TRUE,
   csv_path = "~/Pictures/subjects.csv",
-  delete_original = FALSE
+  delete_original = FALSE,
+  recursive = FALSE
 )
 }
 \arguments{
-\item{paths}{List of photos to be modified. Needs a character vector with full file names}
+\item{paths}{List of photos to be modified. Needs a character vector with full file names or a directory name. In the latter case, you need to set \code{recursive} accordingly.}
 
 \item{csv_execute}{logical, to determine whether modification should be directly written or returned as tibble}
 
 \item{csv_path}{path and file name of the output csv file}
 
 \item{delete_original}{whether the original copies of the photos should be deleted afterwards or not}
+
+\item{recursive}{tells exiftool whether to read files recursively or not. Choose \code{TRUE} if you use a directory path instead of a list of files for the \code{paths} parameter.}
 }
 \value{
 depending on param csv_execute:

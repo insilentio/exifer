@@ -1,3 +1,6 @@
+# exifer 1.7.0
+- `flatten_subject` now creates tags out of the ratings for export photos (instead of summing up 4 & 5 stars to 'Apple-Favourite). Tags may be then reused in Apple Photos to set ratings again (macOS >= 27).
+
 # exifer 1.6.6
 - added metadata for iPhone 17 Pro
 

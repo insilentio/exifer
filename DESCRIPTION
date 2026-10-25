@@ -1,7 +1,7 @@
 Package: exifer
 Type: Package
 Title: Photo Metadata Improver
-Version: 1.7.0
+Version: 1.7.1
 Authors@R: c(
     person(
       "Daniel", "Baumgartner",

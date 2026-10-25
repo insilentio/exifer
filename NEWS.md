@@ -1,3 +1,8 @@
+# exifer 1.7.1
+- bug with IPTC time tag fixed
+- switching to `pak` as installation method for `renv`
+- updated `renv` to R4.6.1
+
 # exifer 1.7.0
 - `flatten_subject` now creates tags out of the ratings for export photos (instead of summing up 4 & 5 stars to 'Apple-Favourite). Tags may be then reused in Apple Photos to set ratings again (macOS >= 27).
 

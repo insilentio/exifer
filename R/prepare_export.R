@@ -16,30 +16,38 @@
 #' @param level_below indicates to which directory level relative to imp_path it is looking for xmp files and
 #' therefore may need to be changed (e.g. on year level -> 2, on album level -> 3)
 #' @param offset the number of hours of offset of the timezone the photos were taken in compared to UTC.
-#' 1 for MEZ, 2 for MESZ  
+#' 1 for MEZ, 2 for MESZ
 #'
 #' @returns nothing
 #' @export
-prepare_export <- function(imp_path = "/Volumes/NoBackup/Bilder/Import/2025/",
-                           level_below = "1",
-                           offset) {
+prepare_export <- function(
+  imp_path = "/Volumes/NoBackup/Bilder/Import/2025/",
+  level_below = "1",
+  offset
+) {
   # Write XMP into original files and cleanup ----------------------------------------------------
-  # (this needs to be done because ON1 writes NEF file metadata mostly into xmp)
+  # (this needs to be done because ON1 writes raw file metadata mostly into xmp)
   exiftoolr::exif_call(
-    args = c("-r", "-ext", "nef", "-tagsfromfile", paste0(imp_path, "/%-", level_below, ":d%f.xmp")),
+    args = c(
+      "-r",
+      "-ext",
+      "nef",
+      "-ext",
+      "cr2",
+      "-ext",
+      "arw",
+      "-tagsfromfile",
+      paste0(imp_path, "/%-", level_below, ":d%f.xmp")
+    ),
     path = imp_path
   )
   system(paste0('find "', imp_path, '" -name "*xmp" -exec rm {} \\;'))
   exiftoolr::exif_call(args = c("-r", "-delete_original!"), path = imp_path)
 
-
   # generate file list and run metadata functions ---------------------------
 
   # get complete file list
-  imported <- list.files(imp_path,
-                         recursive = TRUE,
-                         full.names = TRUE
-  )
+  imported <- list.files(imp_path, recursive = TRUE, full.names = TRUE)
 
   # the metadata functions can be run without writing the metadata already. This is better for performance,
   # because we can execute the time consuming exiftool command only once.
@@ -57,17 +65,16 @@ prepare_export <- function(imp_path = "/Volumes/NoBackup/Bilder/Import/2025/",
   ht <- harmonize_time(imported, csv_execute = FALSE, offset = offset)
 
   modify <- fs |>
-    dplyr::full_join(hl,
-                     by = dplyr::join_by("SourceFile")) |>
-    dplyr::full_join(cl,
-                     by = dplyr::join_by("SourceFile")) |>
-    dplyr::full_join(ht,
-                     by = dplyr::join_by("SourceFile"))
+    dplyr::full_join(hl, by = dplyr::join_by("SourceFile")) |>
+    dplyr::full_join(cl, by = dplyr::join_by("SourceFile")) |>
+    dplyr::full_join(ht, by = dplyr::join_by("SourceFile"))
 
-  handle_return(modify, 
-                csv_execute = TRUE, 
-                paths = imported, 
-                csv_path = "~/Pictures/exifer.csv", 
-                delete_original = TRUE, 
-                with_sep = ", ")
+  handle_return(
+    modify,
+    csv_execute = TRUE,
+    paths = imported,
+    csv_path = "~/Pictures/exifer.csv",
+    delete_original = TRUE,
+    with_sep = ", "
+  )
 }

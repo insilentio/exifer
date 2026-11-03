@@ -72,9 +72,11 @@ harmonize_lensinfo <- function(paths,
   li <- exiftoolr::exif_read(args = args, path = paths) |> 
     dplyr::filter(!is.na(`EXIF:LensModel`))
   
-  # check if the lensinfo tag is completely missing and add it if necessary
+  # check if the lensinfo and lensmake tag are completely missing and add them if necessary
   if (!"EXIF:LensInfo" %in% colnames(li))
     li <- li |> tibble::add_column("EXIF:LensInfo" = NA)
+  if (!"EXIF:LensMake" %in% colnames(li))
+    li <- li |> tibble::add_column("EXIF:LensMake" = NA)  
 
   # amend Nikon and Apple lens information
   # means lower case for lensmake and adaptation of lensmodel
@@ -85,13 +87,13 @@ harmonize_lensinfo <- function(paths,
     dplyr::left_join(exifer::lensMapping, by = dplyr::join_by(`EXIF:LensModel` == model_old)) |> 
     dplyr::mutate(`EXIF:LensModel` = ifelse(is.na(model_new), `EXIF:LensModel`, model_new)) |> 
     dplyr::mutate(`XMP:Lens` = `EXIF:LensModel`) |> 
-    dplyr::mutate(`EXIF:LensInfo` = ifelse((is.na(`EXIF:LensInfo`) | (`EXIF:LensMake` == "Apple")),
-                             unlist(Vectorize(create_lensinfo)(`EXIF:LensModel`, FALSE)),
-                             `EXIF:LensInfo`)) |> 
-    dplyr::mutate(`XMP:LensInfo` = `EXIF:LensInfo`) |> 
     dplyr::mutate(`EXIF:LensMake` = ifelse(`EXIF:LensMake` == "NIKON", "Nikon", `EXIF:LensMake`)) |> 
     dplyr::mutate(`EXIF:LensMake` = ifelse(stringr::str_starts(`EXIF:LensModel`, "Viltrox"), "Viltrox", `EXIF:LensMake`)) |> 
     dplyr::mutate(`EXIF:LensMake` = ifelse(stringr::str_starts(`EXIF:LensModel`, "Sigma"), "Sigma", `EXIF:LensMake`)) |> 
+    dplyr::mutate(`EXIF:LensInfo` = ifelse((is.na(`EXIF:LensInfo`) | (`EXIF:LensMake` == "Apple")),
+                                           unlist(Vectorize(create_lensinfo)(`EXIF:LensModel`, FALSE)),
+                                           `EXIF:LensInfo`)) |> 
+    dplyr::mutate(`XMP:LensInfo` = `EXIF:LensInfo`) |> 
     dplyr::select(-model_new)
   
   if (lensinfo_only) {

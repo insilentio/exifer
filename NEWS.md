@@ -1,3 +1,6 @@
+# exifer 1.8.0
+- updated for Sony camera compatibility
+
 # exifer 1.7.1
 - bug with IPTC time tag fixed
 - switching to `pak` as installation method for `renv`

@@ -1,3 +1,6 @@
+# exifer 1.8.1
+- added iPhone 16 Pro Max
+
 # exifer 1.8.0
 - updated for Sony camera compatibility
 

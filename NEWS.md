@@ -1,3 +1,7 @@
+# exifer 1.8.2
+- added old macro lens
+- fixed issue with missing make information
+
 # exifer 1.8.1
 - added iPhone 16 Pro Max
 

@@ -50,6 +50,9 @@ harmonize_time <- function(
   if (!any(grepl("EXIF:CreateDate", colnames(times)))) {
     times <- times |> dplyr::mutate(`EXIF:CreateDate` = `EXIF:DateTimeOriginal`)
   }
+  if (!any(grepl("EXIF:Make", colnames(times)))) {
+    times <- times |> tibble::add_column("EXIF:Make" = NA)
+  }
 
   times <- times |>
     dplyr::mutate(`EXIF:DateTimeOriginal` = `EXIF:CreateDate`) |>
@@ -67,7 +70,7 @@ harmonize_time <- function(
 
   # combine the iPhone ond non-iPhone pix
   times <- times_iphone |>
-    dplyr::add_row(times |> dplyr::filter(`EXIF:Make` != "Apple")) |>
+    dplyr::add_row(times |> dplyr::filter_out(`EXIF:Make` == "Apple")) |>
     dplyr::select(
       SourceFile,
       `EXIF:DateTimeOriginal`,
